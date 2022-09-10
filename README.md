@@ -1,2 +1,8 @@
-# DSC-611-Fall-2022
-Data Visualization
+# Data Visualization
+
+- Data Visualization fundamentals and Pie Charts
+- Scatter Plots
+- Bar Charts
+- Box and Violin Plots
+- Maps
+- Model Diagrams and detecting Bias
