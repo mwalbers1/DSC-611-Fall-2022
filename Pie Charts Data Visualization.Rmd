@@ -1,0 +1,175 @@
+---
+title: "Pie Charts Data Visualization"
+author: "Michael Albers"
+date: '2022-09-11'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Overview
+
+Produce two pie charts and compare and contrast both charts. Discuss advantages and limitations of pie charts
+
+
+## Data Set
+
+The data set is the listing of companies that comprise the Dow Jones Industrial Average (DJIA) index as of September 8, 2022.  The data was downloaded from https://www.cnbc.com/dow-30/
+
+
+
+```{r tidyverse library, echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(scales)
+```
+
+
+## Read Data
+
+```{r load dataframe}
+dow30_df <- read.csv("data/DOW_30_SEPT_08.csv")
+```
+
+```{r}
+head(dow30_df)
+```
+
+
+```{r}
+str(dow30_df)
+```
+
+
+## Data Pre-processing
+
+```{r create new gain_loss_desc column}
+dow30_df$GAIN_LOSS_DESC <- with(dow30_df, ifelse(GAIN_LOSS == 2, 'Un-changed',
+                                                 ifelse(GAIN_LOSS == 0, 'Loss', 'Gain')))
+```
+
+
+```{r convert columns to factor data types}
+dow30_df$GAIN_LOSS_DESC <- as.factor(dow30_df$GAIN_LOSS_DESC)
+dow30_df$SECTOR <- as.factor(dow30_df$SECTOR)
+```
+
+```{r}
+str(dow30_df)
+```
+
+```{r}
+head(dow30_df)
+```
+
+
+```{r gain_loss dataframe}
+gain_loss_df <- dow30_df %>% 
+  group_by(GAIN_LOSS_DESC) %>% 
+  summarise(counts = n())
+```
+
+```{r}
+gain_loss_df
+```
+
+```{r create prop and y-pos columns}
+gain_loss_df <- gain_loss_df %>% 
+  arrange(desc(GAIN_LOSS_DESC)) %>% 
+  mutate(prop = round(counts * 100/sum(counts), 1),
+         lab_y_position = cumsum(prop) - 0.5*prop)
+```
+
+```{r}
+gain_loss_df
+```
+
+```{r sector dataframe}
+sector_df <- dow30_df %>% 
+  group_by(SECTOR) %>% 
+  summarise(counts = n())
+```
+
+```{r}
+sector_df <- sector_df %>% arrange(counts)
+```
+
+
+```{r}
+sector_df
+```
+
+
+
+## Visualizations
+
+
+```{r Greens palette}
+show_col(brewer_pal(palette = "Greens")(5))
+```
+
+```{r Reds palette}
+show_col(brewer_pal(palette = "Reds")(5))
+```
+
+
+### Gain/Loss Pie Chart
+
+```{r init pie_gain_loss}
+pie_gain_loss <- ggplot(gain_loss_df, aes(x = "", y = prop, fill=GAIN_LOSS_DESC))
+```
+
+
+```{r format pie_gain_loss}
+pie_gain_loss + 
+  ggtitle("Dow Jones Industrial Average - September 8, 2022") +
+  geom_bar(width = 1, stat = "identity", color="white") +
+  scale_fill_manual(name = "Gain/Loss", values = c("#006D2C", "#DE2D26", "gray")) +
+  geom_text(aes(y = lab_y_position, label = prop), color = "white") +
+  coord_polar("y", start = 0) +
+  theme_void()
+```
+
+
+This pie chart uses the green color to indicate the proportion of companies in the DJIA index that had price gains. Red indicates the proportion of companies with a drop in stock price.  The grey color is a neutral color indicating that 3.3% of the DJIA stocks were unchanged.
+
+
+### Sector Pie Chart
+
+
+```{r}
+sector_percent <- round(100 * sector_df$counts / sum(sector_df$counts), 1)
+```
+
+```{r}
+sectors <- as.character(sector_df$SECTOR)
+```
+
+
+```{r, fig.height=6, fig.width=9 }
+pie(sector_df$counts, labels = sector_percent, 
+    main = "Dow Jones Industrial Average - September 8, 2022",
+    col = rainbow(length(sector_df$counts)))
+legend("topright", sectors, cex=0.75, title = "Sector Proportions", fill=rainbow(length(sector_df$counts)))
+```
+
+
+The sector pie chart is less effective than the pie chart for Gain/Loss.  It has more than seven categories which makes it difficult to understand.  This chart also exhibits color overload because it uses more than three colors.  A bar chart would be a better choice for the DJIA (Dow Jones Industrial Average) sector proportions.
+
+
+## Summary
+
+
+- A disproportional pie chart can distort the reality and make it appear that one pie slice is bigger than it really is. A donut chart can be a good alternative since the largest proportion does not dominate the visual as much as a pie chart does. 
+
+
+- Pie charts can promote a scarcity mindset for the category with the smallest proportion
+
+
+- Pie charts should be used to convey proportions of two or three categories as shown in the first pie chart
+
