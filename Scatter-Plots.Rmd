@@ -132,8 +132,14 @@ ggplot(data = housing_df, mapping = aes(x = area, y = price_thousands, colour = 
 ```
 
 
-The final chart is grouping of scatter plots by the Bedrooms attribute.  It confirms that houses with two to four bedrooms show a stronger relationship between Area and Price.
+The final chart is grouping of scatter plots by the Bedrooms attribute.  It confirms that houses with two to four bedrooms show a stronger relationship between Area and Price.  This plot is most effective because it explains the strength of relationship between Area and Price for specific number of bedrooms.  It conveys the information more clearly than the first two plots.
 
+
+## Comment on Readings
+
+### Enhancing statistical charts: toward better data visualization and analysis
+
+Scatter plots can employ encoding strategies such as color, size, symbols, opacity, texture.  The scatter plots can be grouped into separate positional bins for a particular attribute.  An example is shown on page 826 Figure 5c which comprises four square bins with each one having its own scatter plot.
 
 
 ## Summary
@@ -141,5 +147,10 @@ The final chart is grouping of scatter plots by the Bedrooms attribute.  It conf
 Scatter plots are helpful for identifying patterns between two numeric features. It can be helpful for identifying predictive features for a target variable.  Scatter plots are useful for creating Linear Regression models for identifying features and analyzing residuals of a Linear Regression model.
 
 
+
+## References
+
+
+Luo, X., Yuan, Y., Zhang, K. et al. Enhancing statistical charts: toward better data visualization and analysis. J Vis 22, 819–832 (2019). https://doi.org/10.1007/s12650-019-00569-2
 
 
