@@ -1,0 +1,118 @@
+---
+title: "Scatter Plots"
+author: "Michael Albers"
+date: '2022-09-17'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(janitor)
+```
+
+
+
+## Overview
+
+- Compare and contrast two scatter plots
+
+
+
+
+## Data Set
+
+This data set includes housing prices based on certain factors like house area, bedrooms, furnished, nearness to main road. The data set was downloaded from: https://www.kaggle.com/datasets/yasserh/housing-prices-dataset
+
+
+**Acknowledgement:**
+
+Harrison, D. and Rubinfeld, D.L. (1978) Hedonic prices and the demand for clean air. J. Environ. Economics and Management 5, 81–102.
+Belsley D.A., Kuh, E. and Welsch, R.E. (1980) Regression Diagnostics. Identifying Influential Data and Sources of Collinearity. New York: Wiley.
+
+
+
+## Load Data
+
+```{r}
+housing_df <- read.csv('data/Housing.csv')
+```
+
+```{r}
+head(housing_df)
+```
+
+
+
+## Pre-process Data
+
+```{r}
+str(housing_df)
+```
+
+
+```{r}
+colnames(housing_df) <- c('price', 'area', 'bedrooms', 'bathrooms', 'stories', 'main_road', 'guest_room', 'basement', 'hot_water_heating', 'air_conditioning', 'parking', 'pref_area', 'furnishing_status')
+```
+
+
+```{r}
+housing_df$main_road <- as.factor(housing_df$main_road)
+housing_df$guest_room <- as.factor(housing_df$guest_room)
+housing_df$basement <- as.factor(housing_df$basement)
+housing_df$hot_water_heating <- as.factor(housing_df$hot_water_heating)
+housing_df$air_conditioning <- as.factor(housing_df$air_conditioning)
+housing_df$pref_area <- as.factor(housing_df$pref_area)
+housing_df$furnishing_status <- as.factor(housing_df$furnishing_status)
+```
+
+
+```{r}
+housing_df <- remove_empty(housing_df, which = "rows")
+```
+
+
+```{r}
+str(housing_df)
+```
+
+
+```{r}
+
+```
+
+
+## House Price and Area Scatter Plot
+
+```{r}
+ggplot(data = housing_df, mapping = aes(x = area, y = price)) +
+  geom_jitter(width = 0.001*sd(housing_df$price, na.rm = TRUE), alpha=0.5, color='blue') +
+  labs(x="Area", y="Price")
+```
+
+```{r}
+
+```
+
+
+```{r}
+
+```
+
+
+
+
+## Summary
+
+Scatter plots are helpful for identifying patterns between two numeric features. It can be helpful for identifying predictive features for a target variable.  Scatter plots are most useful for creating Linear Regression models for identifying features and analyzing residuals of a Linear Regression model.
+
+
+
+
