@@ -19,23 +19,15 @@ library(janitor)
 ```
 
 
-
-## Overview
-
-- Compare and contrast two scatter plots
-
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(scales)
+```
 
 
 
 ## Data Set
 
 This data set includes housing prices based on certain factors like house area, bedrooms, furnished, nearness to main road. The data set was downloaded from: https://www.kaggle.com/datasets/yasserh/housing-prices-dataset
-
-
-**Acknowledgement:**
-
-Harrison, D. and Rubinfeld, D.L. (1978) Hedonic prices and the demand for clean air. J. Environ. Economics and Management 5, 81–102.
-Belsley D.A., Kuh, E. and Welsch, R.E. (1980) Regression Diagnostics. Identifying Influential Data and Sources of Collinearity. New York: Wiley.
 
 
 
@@ -52,6 +44,15 @@ head(housing_df)
 
 
 ## Pre-process Data
+
+
+- Rename column headers
+
+- Convert character columns to factor datatype
+
+- Scale Price in thousands
+
+
 
 ```{r}
 str(housing_df)
@@ -71,6 +72,7 @@ housing_df$hot_water_heating <- as.factor(housing_df$hot_water_heating)
 housing_df$air_conditioning <- as.factor(housing_df$air_conditioning)
 housing_df$pref_area <- as.factor(housing_df$pref_area)
 housing_df$furnishing_status <- as.factor(housing_df$furnishing_status)
+housing_df$bedrooms <- as.factor(housing_df$bedrooms)
 ```
 
 
@@ -80,38 +82,63 @@ housing_df <- remove_empty(housing_df, which = "rows")
 
 
 ```{r}
+housing_df$price_thousands <- housing_df$price / 1000
+```
+
+
+```{r}
 str(housing_df)
 ```
 
 
-```{r}
 
-```
+## House Price and Area Scatter Plots
 
-
-## House Price and Area Scatter Plot
 
 ```{r}
-ggplot(data = housing_df, mapping = aes(x = area, y = price)) +
+ggplot(data = housing_df, mapping = aes(x = area, y = price_thousands)) +
   geom_jitter(width = 0.001*sd(housing_df$price, na.rm = TRUE), alpha=0.5, color='blue') +
-  labs(x="Area", y="Price")
+  labs(x="Area", y="Price (Thousands)") +
+  ggtitle("Housing Scatter Plot 1")
 ```
+
+
+
+The first scatter plot shows a relationship between Area and Price.  However, the relationship appears to weaken as Area increases above 5,000 square feet.
+
+
+### Color by Bedrooms
+
 
 ```{r}
-
+ggplot(data = housing_df, mapping = aes(x = area, y = price_thousands, colour = bedrooms)) +
+  geom_jitter(width = 0.001*sd(housing_df$price, na.rm = TRUE), alpha=0.65) +
+  scale_colour_brewer(palette = "Set1") +
+  labs(x="Area", y="Price (Thousands)", color = "Number of Bedrooms") + 
+  ggtitle("Housing Scatter Plot 2")
 ```
 
 
-```{r}
+This scatter plot uses a color channel to encode the Bedrooms attribute.  This scatter plot reveals a stronger relationship between house area and price for one to three-bedroom homes, as opposed to houses with five and six bedrooms which appear more random.
 
+
+```{r fig.width=11.25}
+ggplot(data = housing_df, mapping = aes(x = area, y = price_thousands, colour = bedrooms)) +
+  geom_jitter(width = 0.001*sd(housing_df$price, na.rm = TRUE), alpha=0.65) +
+  labs(x="Area", y="Price (Thousands)", color = "Number of Bedrooms") + 
+  scale_colour_brewer(palette = "Set1") +
+  ggtitle("Housing Scatter Plot 3") +
+  facet_grid(cols = vars(bedrooms))
 ```
 
+
+The final chart is grouping of scatter plots by the Bedrooms attribute.  It confirms that houses with two to four bedrooms show a stronger relationship between Area and Price.
 
 
 
 ## Summary
 
-Scatter plots are helpful for identifying patterns between two numeric features. It can be helpful for identifying predictive features for a target variable.  Scatter plots are most useful for creating Linear Regression models for identifying features and analyzing residuals of a Linear Regression model.
+Scatter plots are helpful for identifying patterns between two numeric features. It can be helpful for identifying predictive features for a target variable.  Scatter plots are useful for creating Linear Regression models for identifying features and analyzing residuals of a Linear Regression model.
 
 
 
