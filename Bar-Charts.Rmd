@@ -1,0 +1,174 @@
+---
+title: "Bar Charts"
+author: "Michael Albers"
+date: '2022-09-24'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
+```
+
+
+## Overview
+
+- Create three bar plots and compare and contrast them
+
+- Comment on bar plot examples from visualization readings
+
+
+## Data Set 
+
+The Gapminder data set consists of demographics such as gdp, population, and life expectancy for countries throughout the world. It was downloaded from https://assets.datacamp.com/production/repositories/1323/datasets/578a87c7d1e46b61ec2cfc0aaa1e42acb3d03a11/gapminder.tsv
+
+
+
+## Load Gapminder data set
+
+```{r}
+gapminder <- read.csv('data/gapminder_americas_europe.csv')
+```
+
+```{r}
+head(gapminder)
+```
+
+
+```{r}
+americas_europe_df <- gapminder %>% 
+  filter(continent %in% c('Americas', 'Europe')) %>% 
+  group_by(continent, country) %>% 
+  summarize(avg_life_exp = round(mean(lifeExp)))
+```
+
+```{r}
+head(americas_europe_df,12)
+```
+
+
+```{r Europe dataframe}
+europe_df <- americas_europe_df %>% 
+  filter(continent == 'Europe') %>% 
+  arrange(desc(avg_life_exp))
+```
+
+```{r Americas dataframe}
+americas_df <- americas_europe_df %>% 
+  filter(continent == 'Americas') %>% 
+  arrange(desc(avg_life_exp))
+```
+
+
+```{r}
+head(americas_df)
+```
+
+```{r}
+americas_df$country <- factor(americas_df$country, levels = americas_df$country[order(desc(americas_df$avg_life_exp))])
+```
+
+
+## Bar Charts
+
+
+### Average Life Expectancy - Americas
+
+
+Display bar chart for Average life expectancy for countries in the Americas continent from 2002 to 2007
+
+
+```{r fig.height=6, fig.width=7.5}
+ggplot(americas_df, aes(x=avg_life_exp, y=country)) +
+  geom_col(colour = "white", fill="#b3e5fc") + 
+  ylab("Country") + 
+  xlab("Average Life Expectancy") +
+  geom_text(aes(label = avg_life_exp), size = 3.5, vjust = .4, hjust = -.5, colour = "black") +
+  ggtitle("Americas Average Life Expectancy 2002 to 2007")
+```
+
+The average life expectancy of countries are listed in ascending order for all countries in Americas continent
+
+
+### Average Life Expectancy for Americas and Europe
+
+Display average life expectancy for the top five countries in Americas and Europe continents 
+
+
+```{r Americas Top 5, echo=FALSE, message=FALSE}
+americas_top5 <- americas_df %>% 
+  top_n(5)
+```
+
+```{r Europe Top 5, echo=FALSE, message=FALSE}
+europe_top5 <- europe_df %>% 
+  top_n(5)
+```
+
+```{r Top Life Exp}
+top_life_exp <- rbind(americas_top5, europe_top5)
+```
+
+
+```{r}
+top_life_exp$country <- factor(top_life_exp$country, levels = top_life_exp$country[order(desc(top_life_exp$avg_life_exp))])
+```
+
+
+```{r Bar chart using facets, fig.width=10.5}
+ggplot(top_life_exp, aes(x=avg_life_exp, y=country)) +
+  geom_col(colour = "white", fill="#b3e5fc") + 
+  ylab("Country") + 
+  xlab("Average Life Expectancy") +
+  geom_text(aes(label = avg_life_exp), size = 3.5, vjust = .4, hjust = -.5, colour = "black") +
+  ggtitle("Average Life Expectancy 2002 to 2007") +
+  facet_wrap(~continent)
+```
+
+
+Separating the countries into their respective continents does not work very will with the facet wrap function. There are gaps in both charts which makes it difficult to read.
+
+
+```{r Combine continents}
+ggplot(top_life_exp, aes(x=avg_life_exp, y=country, fill=continent)) +
+  geom_col(colour="gray") +
+  ylab("Country") + 
+  xlab("Average Life Expectancy") +
+  geom_text(aes(label = avg_life_exp), size = 3.5, vjust = .4, hjust = -.5, colour = "black") +
+  scale_fill_manual(name = "Continent", values = c("#C7F6B6", "#FFF9C2")) +
+  ggtitle("Average Life Expectancy 2002 to 2007") 
+```
+
+
+This chart adds more knowledge as it shows that the countries with the top average life expectancy are Canada and European countries.
+
+
+## Bar Charts Summary
+
+
+- The first bar chart is limited to just the Americas continent and it shows an ordered list of countries and their respective average life expectancy between 2002 and 2007
+
+
+- The second bar chart attempts to separate European countries from the Americas countries using facet wrap.  It is not visually appealing as it shows large gaps in both facets
+
+
+- The third bar chart appears to be the most informative and appealing since it combines all countries into a single chart while using fill color to distinguish European from Americas countries
+
+
+## Readings Summary
+
+### Enhancing statistical charts: toward better data visualization and analysis
+
+
+Bar charts presents counts of categorical data items with bars in which the length of the bars encodes the counts (Luo, X., Yuan, Y., Zhang, K. et al., 2019). Figure 3b on page 824 shows a stacked bar chart and grouped bar chart. Stacked bar charts are used to show counts of categories along with the sub-categories of each category.  Stacked bar charts can be difficult to read because each category will have sub-categories that begin/end on different levels.  The article mentions that the vertical axis in bar charts can be normalized which makes each bar the same size. This in turn makes it a little easier to interpret the sub-categories of a stacked bar chart. An example is on page 824, Figure 3e.
+
+
+## References
+
+
+Luo, X., Yuan, Y., Zhang, K. et al. Enhancing statistical charts: toward better data visualization and analysis. J Vis 22, 819–832 (2019). https://doi.org/10.1007/s12650-019-00569-2
+
+
