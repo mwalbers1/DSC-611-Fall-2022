@@ -1,0 +1,90 @@
+---
+title: "Box and Violin Plots"
+author: "Michael Albers"
+date: '2022-09-29'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+
+## Overview
+
+Make a box plot and a violin plot and describe which is more effective and why
+
+
+## Data Set
+
+
+The Dow Jones Industrial Average (DJIA) index is a univariate time series from January 1, 1980 to December 31, 2012. The data set was downloaded from https://vincentarelbundock.github.io/Rdatasets/csv/AER/DJIA8012.csv
+
+
+## Load Data set 
+
+
+```{r Load dataframe}
+djia <- read.csv('data/DJIA_Category.csv')
+```
+
+
+```{r}
+head(djia)
+```
+
+
+
+```{r}
+djia$category <- factor(djia$category, levels = c("80s decade", "90s decade", "2000s decade"))
+```
+
+```{r}
+str(djia)
+```
+
+
+```{r}
+summary(djia)
+```
+
+## Create Box Plot
+
+
+```{r Box plot}
+ggplot(djia, aes(x=category, y=value, fill=category)) +
+  geom_boxplot(width = 0.5) +
+  scale_fill_manual(name = "Decade", values = c("2000s decade" = "#ED813E", "90s decade" = "#9F8CFF", "80s decade" = "#1FD655")) +
+  ylab("Index Value") +
+  xlab("") +
+  ggtitle("Dow Jones Industrial Average (DJIA) Index across decades")
+```
+
+The median DJIA index is higher for 2000s decade than both the 80s and 90s decades.  There are also outliers in 2000s decade indicating a period where there was a sharp drop in the Dow index.
+
+
+## Create Violin Plot
+
+
+```{r Violin Plot}
+ggplot(djia, aes(x=category, y=value, fill=category)) +
+  geom_violin(trim = FALSE) + coord_flip() + 
+  scale_fill_manual(name = "Decade", values = c("2000s decade" = "#ED813E", "90s decade" = "#9F8CFF", "80s decade" = "#1FD655")) +
+  stat_summary(fun.y = median, geom = "point", size = 2.5, color="yellow") +
+  ylab("Index Value") +
+  xlab("") +
+  ggtitle("Dow Jones Industrial Average (DJIA) Index across decades")
+```
+
+
+
+
+
+## References
+
+Dow Jones Industrial Average (DJAI), Retrieved from https://vincentarelbundock.github.io/Rdatasets/doc/AER/DJIA8012.html
+
