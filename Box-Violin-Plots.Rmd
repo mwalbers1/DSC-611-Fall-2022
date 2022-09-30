@@ -64,7 +64,7 @@ ggplot(djia, aes(x=category, y=value, fill=category)) +
   ggtitle("Dow Jones Industrial Average (DJIA) Index across decades")
 ```
 
-The median DJIA index is higher for 2000s decade than both the 80s and 90s decades.  There are also outliers in 2000s decade indicating a period where there was a sharp drop in the Dow index.
+The median DJIA index is higher for the 2000s decade than both the 80s and 90s decades.  There are also outliers in 2000s decade indicating a period where there was a sharp drop in the Dow index. Overall, the box plots show a steady rise in the median index value between 1980 and 2012 which was good for investors.  The data is right-skewed in all three categories.  The 90s decade shows the largest IQR (Interquartile range) which means that the DJIA index increased the most in the 1990s.
 
 
 ## Create Violin Plot
@@ -80,11 +80,30 @@ ggplot(djia, aes(x=category, y=value, fill=category)) +
   ggtitle("Dow Jones Industrial Average (DJIA) Index across decades")
 ```
 
+The violin plots shows the Kernel Density Estimation of the data for each category.  In the 80s decade, there is a wide distribution of calendar dates above and below the median.  The widest distribution of data occurs near the median in the 80s decade.  We see a narrower distribution of data near the median in the 90s decade, while there were index values far above the median in the 90s decade.  The 2000s decade shows even distribution of data above and below the median index value which was around 11,000.
 
 
+## Summary 
+
+The box plots and violin plots show very good insights in the data.  The violin plots may be the most useful since it shows the distribution of the data and the variability of the DJIA in each of the three decades.  The box plots revealed outliers in the 2000s decade which was probably due to the great recession of 2008.
+
+
+## Reading Summary
+
+*"To Identify What Is Not There: A Definition of Missingness Patterns and Evaluation of Missing Value Visualization."*
+
+The theme of this article was on the study of missing values and the plots used to identify missing data.  There are three missing data patterns that the article tested for; AM - Amount of missing data; JM - Joint missing data; and CM - Conditional missing data.  The results revealed that the accuracy and ranked accuracy scores for Conditional missing data was better than for the Amount of Missing data (AM) and  Joint Missing data (JM).  The box plots on page 244, Figure 10 showed the median scores for each of the three categories and CM had the highest median score for both accuracy and ranked accuracy.  The box plots on page 244, Figure 11 illustrated that the Matrix plots were the most effective in that they scored the highest median accuracy and ranked accuracy scores among all plotting methods.
+
+In both cases, the box plots showed a good visual illustration of the test results.  On page 244 Table 3, the descriptive statistics show the Min, Median, and Max scores for all three visualization methods for both the accuracy and ranked accuracy tests. The box plots in figures 10 and 11 confirms these results and conveys a nice visual comparison for all three categories of missing data.
+
+On page 246, two additional box plots for accuracy and ranked accuracy show the median and IQR ranges for the combination of missing data patterns and charting technique such as AM_MM (Amount of missing data and Marginplot Matrix), JM_MM (Joint missing data and Marginplot Matrix) etc. These box plots deliver a clear visualization of which combination of missing data pattern and chart type scored the highest, as well as how they compare with one another.  The box plots in this page adds a lot of knowledge into the study results as opposed to listing a table of raw p-values and z-scores.
 
 
 ## References
 
+
 Dow Jones Industrial Average (DJAI), Retrieved from https://vincentarelbundock.github.io/Rdatasets/doc/AER/DJIA8012.html
+
+Fernstad, Sara Johansson (2019) "To Identify What Is Not There: A Definition of Missingness Patterns and Evaluation of Missing Value Visualization." **Information Visualization** 18(2):230-50.
+
 
