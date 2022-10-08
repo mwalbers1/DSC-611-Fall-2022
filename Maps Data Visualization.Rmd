@@ -1,0 +1,142 @@
+---
+title: "Maps Data Visualization"
+author: "Michael Albers"
+date: '2022-10-07'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
+```
+
+
+## Overview
+
+- Create two instances of a Geo Map
+
+- Discuss which is most effective and why?
+
+- Academic paper comments
+
+
+## Data Set
+
+Wind farms in the United States of America downloaded from https://chart-studio.plotly.com/~jordanpeterson/781.csv
+
+
+## Read Data Set
+
+```{r}
+wind_farm_df <- read.csv('data/wind-turbine-coord.csv')
+```
+
+```{r}
+head(wind_farm_df)
+```
+
+```{r}
+str(wind_farm_df)
+```
+
+```{r}
+turbines_df <- wind_farm_df %>% 
+  filter(lon > -135)
+```
+
+
+
+## Geo Maps
+
+
+### Geo Map using maps package
+
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+library(maps)
+```
+
+```{r}
+states_map <- map_data("state")
+```
+
+```{r}
+p <- ggplot(states_map, aes(x = long, y=lat, group=group)) +
+  geom_polygon(fill = "white", colour = "grey65", size = 0.1) +
+  coord_map()
+```
+
+
+```{r fig.height=8}
+p + geom_point(data = turbines_df, aes(x=lon, y=lat, fill=turbine_mfg, group=turbine_mfg), colour="white", size=1.5, shape = 21) +
+  theme(legend.position = "bottom") +
+  labs(title = "Wind Turbines", fill = NULL)
+```
+
+This is a static map of all wind turbines within the United States. This plot suffers a little from over plotting because the number of turbines is very large. This map provides a general idea of the distribution of wind turbines within the continental United States. The next interactive Geo map should provide more knowledge.
+
+
+### Interactive Geo Map
+
+The mapview package is an interactive Geo map allowing one to zoom in or out on different areas of the U.S. map
+
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+library(tigris)
+library(sf)
+library(mapview)
+```
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+us_geo <- states(cb=FALSE)
+```
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+mapviewOptions(basemaps.color.shuffle = FALSE)
+```
+
+```{r}
+turbine_mfg <- st_as_sf(turbines_df, coords = c("lon", "lat"), crs = 4326)
+```
+
+
+```{r mapview interactive map}
+mapview(us_geo, col.regions="white") + mapview(turbine_mfg, legend=FALSE)
+```
+
+
+The mapview function provides an interactive experience in which one can zoom into specific areas of the U.S. map. However, the legend was disabled since the mapview layer does not support legends with many column values as mentioned at https://r-spatial.github.io/mapview/articles/mapview_02-advanced.html.
+
+
+
+
+## Readings
+
+### Visualizing Age, Period, and Cohort Patterns of Substance Use in the U.S. Opioid Crisis.
+
+The two Heatmaps on page 2 Figure 1 shows the cohorts of age groups use of prescriptions and Heroin.  The Heatmaps shows a pattern of drug switching from prescription drugs to Heroin after 2010.  The Heatmaps use of colors are a little confusing for low rates of drug use which are depicted in darker shades of green.  It is difficult to see the delineation from low rates to moderate rates because the darker shades of green blend into the less darker shades without any clear boundary.  
+
+The other issue I have is with the measures of scale between the two Heatmaps. The first Heatmap shows the rate of prescription drug use per 100 people whereas the Heroin Heatmap shows the rate of usage per 1,000 users.  All other aspects of the two Heatmaps are identical which makes it easy to overlook the fact that the second Heatmap is on a much different scale.  The article makes mention of it, however the charts do not make it very clear unless you look very closely at the scales for both Heatmaps.
+
+
+### Visualizing Individual Outcomes of Social Mobility Using Heatmaps
+
+The Heatmap on page 2 Figure 1 uses a much better color scheme as compared to the Heatmaps from the article titled "Visualizing Age, Period, and Cohort Patterns of Substance Use in the U.S. Opioid Crisis".  The red and blue colors are used to denote poor and positive self-rated health respectively.  The Heatmap uses clear boundaries to isolate key inter-relationships between a person's origin social economic status and their own self-reported social status.  The percentages are also labeled in each square to clearly show the different values across forty nine dimensions in this visualization. The authors of this paper give a very good explanation for the use of a Heatmap as opposed to grouped bar charts. They explain that grouped bar charts would be very difficult to understand all of the interlationships among the forty-nine dimensions of data.
+
+
+
+## References 
+
+
+https://chart-studio.plotly.com/~jordanpeterson/781
+
+Prag, Patrick (2020) "Visualizing Individual Outcomes of Social Mobility Using Heatmaps." *Socius* 5:2378023119855486
+
+Verdery, Ashton M., Kira England, Alexander Chapman, Liying Luo, Katherine McLean, and Shannon Monnat (2020) "Visualizing Age, Period, and Cohort Patterns of Substance Use in the U.S. Opioid Crisis." *Socius* 6:2378023120906944
+
+
+
+
