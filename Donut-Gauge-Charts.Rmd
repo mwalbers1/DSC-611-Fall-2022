@@ -1,0 +1,116 @@
+---
+title: "Donut and Gauge Charts"
+author: "Michael Albers"
+date: '2022-10-13'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
+```
+
+
+## Overview
+
+- Create Donut and Gauge chart
+
+- Discuss which is most effective and why?
+
+- Academic paper comments
+
+
+## Data Sets
+
+Wind farms in the United States of America downloaded from https://chart-studio.plotly.com/~jordanpeterson/781.csv
+
+
+## Read Data Set
+
+```{r}
+wind_farm_df <- read.csv('data/wind-turbine-coord.csv')
+```
+
+```{r}
+head(wind_farm_df)
+```
+
+
+## Donut Chart
+
+
+### Top 10 Wind Turbine Manufacturers
+
+
+```{r}
+turbine_mfg_df <- wind_farm_df %>% 
+  group_by(turbine_mfg) %>% 
+  summarise(counts = n()) %>% 
+  arrange(desc(counts))
+```
+
+```{r}
+top_10_mfg <- top_n(turbine_mfg_df, 10)
+```
+
+
+```{r}
+top_10_mfg_prop <- top_10_mfg %>% 
+  mutate(prop = round(counts*100/sum(counts), 1)) %>% 
+  arrange(desc(prop))
+```
+
+```{r}
+top_10_mfg_prop$turbine_mfg
+```
+
+
+
+```{r}
+top_10_mfg_prop$turbine_mfg <- factor(top_10_mfg_prop$turbine_mfg, levels = c("GE", "Vestas", "Kenetech", "Siemens",
+                                                                              "Mitsubishi", "Gamesa", "Suzlon", "NEG Micon",
+                                                                              "Bonus",  "Clipper" ))
+```
+
+
+
+```{r}
+p <- ggplot(top_10_mfg_prop, aes(x = 2, y = prop, fill = turbine_mfg)) +
+  geom_col() + 
+  coord_polar("y", start = 100) +
+  ggtitle("Top 10 Wind Turbine Manufacturers")
+```
+
+
+```{r}
+p + geom_text(aes(label = paste(prop, "%", sep = "")), col = "white", size = 3.5, fontface = "bold",
+            position = position_stack(vjust = 0.5)) +
+    theme_void() +
+    xlim(.2, 2.5)  
+```
+
+
+
+## References
+
+
+Wood, Michael Lee (2020). "Visualizing Change in Ordinal Measures: Religious Attendance in the United States (1972-2018)." *Socius* 6:2378023120906944.
+
+
+
+## Coding References
+
+
+Donut chart in ggplot2. Retrieved from: 
+https://r-charts.com/part-whole/donut-chart-ggplot2/
+
+
+Changing the order of the slices in a pie chart in R. Retrieved from: 
+https://stackoverflow.com/questions/70761001/changing-the-order-of-the-slices-in-a-pie-chart-in-r
+
+
+
+
